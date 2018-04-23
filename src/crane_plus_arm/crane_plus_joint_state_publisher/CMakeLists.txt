@@ -11,6 +11,6 @@ catkin_package(
   )
 
 install(
-  PROGRAMS src/joint_state_publisher.py
+  PROGRAMS src/crane_plus_joint_state_publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
   )
