@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<robot name="work_cell"
+    xmlns:controller="http://playerstage.sourceforge.net/gazebo/xmlschema/#controller"
+    xmlns:interface="http://playerstage.sourceforge.net/gazebo/xmlschema/#interface"
+    xmlns:sensor="http://playerstage.sourceforge.net/gazebo/xmlschema/#sensor"
+    xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Include the Crane+ generator macro -->
+  <xacro:include filename="$(find crane_plus_description)/urdf/crane_plus.xacro"/>
+
+  <!-- A link to provide the location reference of the work cell -->
+  <link name="world"/>
+
+  <!-- A link from the world to the robot's base link -->
+  <link name="base_link"/>
+  <joint name="world_to_base_link" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Place a Crane+ manipulator at the centre of the world -->
+  <crane_plus parent="base_link"
+              servo_color="black" bracket_color="grey" gripper_color="black"
+              joints_vlimit="1.571"
+              pan_llimit="-2.617" pan_ulimit="2.617">
+    <origin xyz="0 0 0"/>
+  </crane_plus>
+
+  <!-- Place a camera in the world with a link that can be calibrated -->
+  <link name="camera_link"/>
+  <joint name="camera" type="fixed">
+    <parent link="world"/>
+    <child link="camera_link"/>
+    <origin xyz="0.420694 -0.0278932 0.660137" rpy="-2.84101 0.0487073 1.52794"/>
+  </joint>
+</robot>

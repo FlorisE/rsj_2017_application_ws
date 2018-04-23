@@ -1,0 +1,25 @@
+<launch>
+  <param name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find rsj_2017_application)/urdf/work_cell.urdf.xacro'"/>
+  <include file="$(find crane_plus_hardware)/launch/start_arm.launch"/>
+  <include file="$(find crane_plus_moveit_config)/launch/move_group.launch"/>
+
+  <node name="camera" pkg="usb_cam" type="usb_cam_node" output="screen">
+    <param name="camera_name" value="elecom_ucam"/>
+    <param name="camera_frame_id" value="camera_link"/>
+    <param name="video_device" value="/dev/video1"/>
+    <param name="image_width" value="640"/>
+    <param name="image_height" value="480"/>
+    <param name="pixel_format" value="yuyv"/>
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <node name="pickandplace" pkg="rsj_2017_pick_and_placer" type="pick_and_placer" output="screen">
+    <remap from="/block" to="/block_finder/pose"/>
+  </node>
+
+  <node name="block_finder" pkg="rsj_2017_block_finder" type="block_finder" output="screen">
+    <remap from="/usb_cam_node/camera_info" to="/camera/camera_info"/>
+    <remap from="/usb_cam_node/image_raw" to="/camera/image_raw"/>
+  </node>
+</launch>
