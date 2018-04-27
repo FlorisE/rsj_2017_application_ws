@@ -140,9 +140,9 @@ include_directories(
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/pick_and_placer.cpp
-# )
+add_library(${PROJECT_NAME}
+  src/pick_and_placer.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -207,6 +207,7 @@ include_directories(
 #############
 ## Testing ##
 #############
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test test/pnptests.cpp)
@@ -227,7 +228,7 @@ add_executable(${PROJECT_NAME}_pick_and_placer src/pick_and_placer_node.cpp)
 ## The above recommended prefix causes long target names, the following renames the
 ## target back to the shorter version for ease of user use
 ## e.g. "rosrun someones_pkg node" instead of "rosrun someones_pkg someones_pkg_node"
-set_target_properties(${PROJECT_NAME}_pick_and_placer PROPERTIES OUTPUT_NAME pick_and_placer PREFIX "")
+# set_target_properties(${PROJECT_NAME}_pick_and_placer PROPERTIES OUTPUT_NAME pick_and_placer PREFIX "")
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
