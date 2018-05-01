@@ -6,13 +6,27 @@
 
 ros::NodeHandle *nh_;
 
-class PickAndPlacer : testing::Test {
+class PickAndPlacer : public testing::Test {
 public:
   PickNPlacer *pnp_;
+
   virtual void SetUp() {
     pnp_ = new PickNPlacer(*nh_);
   }
+  virtual void TearDown() {}
 };
+
+TEST_F(PickAndPlacer, Picks) {
+
+}
+
+TEST_F(PickAndPlacer, Places) {
+
+}
+
+TEST_F(PickAndPlacer, PicksAndPlaces) {
+
+}
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);

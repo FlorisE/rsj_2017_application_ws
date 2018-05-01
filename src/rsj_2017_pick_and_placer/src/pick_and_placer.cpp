@@ -17,10 +17,10 @@
 // Class to provide the node's behaviour and store its state between callbacks
 class PickNPlacer {
  public:
-  explicit PickNPlacer(ros::NodeHandle& node_handle)
+  explicit PickNPlacer(ros::NodeHandle& node_handle, actionlib::SimpleActionClient<control_msgs::GripperCommandAction> sac = actionlib::SimpleActionClient<control_msgs::GripperCommandAction>("/crane_plus_gripper/gripper_command", "true"))
       : arm_("arm"),
         gripper_group_("gripper"),
-        gripper_("/crane_plus_gripper/gripper_command", "true") {
+        gripper_(sac) {
     // Get the value for the configurable values from the parameter server, and
     // set sensible defaults for those values not specified on the parameter
     // server
@@ -144,64 +144,33 @@ class PickNPlacer {
     // Prepare
     ROS_INFO("Moving to prepare pose");
     geometry_msgs::PoseStamped pose;
-    pose.header.frame_id = scene_task_frame_;
-    pose.pose.position.x = msg->x;
-    pose.pose.position.y = msg->y;
-    pose.pose.position.z = pick_prepare_z_;
-    pose.pose.orientation.x = 0.0;
-    pose.pose.orientation.y = 0.707106;
-    pose.pose.orientation.z = 0.0;
-    pose.pose.orientation.w = 0.707106;
-    // Plan a move to the pose
-    arm_.setPoseTarget(pose);
-    // Execute the move
-    if (!arm_.move()) {
+    if (!DoPickPrepare(pose, msg->x, msg->y)) {
       ROS_WARN("Could not move to prepare pose");
       return false;
     }
 
     ROS_INFO("Opening gripper");
     control_msgs::GripperCommandGoal goal;
-    // Open the gripper to the configuered open width
-    goal.command.position = gripper_open_;
-    // Send the gripper command
-    gripper_.sendGoal(goal);
-    // Wait for the command to complete
-    bool finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
-    if (!finishedBeforeTimeout) {
+
+    if (!DoOpenGripper(goal)) {
       ROS_WARN("Gripper open action did not complete");
       return false;
     }
 
-    // Approach
     ROS_INFO("Executing approach");
-    // Move to the configured height above the surface to get the gripper
-    // around the object
-    pose.pose.position.z = pick_z_;
-    arm_.setPoseTarget(pose);
-    if (!arm_.move()) {
+    if (!DoApproach(pose)) {
       ROS_WARN("Could not move to grasp pose");
       return false;
     }
 
-    // Grasp
     ROS_INFO("Grasping object");
-    // Close the gripper to the configured closed width
-    goal.command.position = gripper_close_;
-    gripper_.sendGoal(goal);
-    finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
-    if (!finishedBeforeTimeout) {
+    if (!DoGrasp(goal)) {
       ROS_WARN("Gripper close action did not complete");
       return false;
     }
-    arm_.attachObject("sponge", "", gripper_group_.getLinkNames());
 
-    // Retreat
     ROS_INFO("Retreating");
-    // Move to the configuered height above the surface to lift the object away
-    pose.pose.position.z = pick_prepare_z_;
-    arm_.setPoseTarget(pose);
-    if (!arm_.move()) {
+    if (!DoRetreat(pose)) {
       ROS_WARN("Could not move to retreat pose");
       return false;
     }
@@ -210,10 +179,88 @@ class PickNPlacer {
     return true;
   }
 
+  bool DoPickPrepare(geometry_msgs::PoseStamped& pose, double x, double y) {
+    pose.header.frame_id = scene_task_frame_;
+    pose.pose.position.x = x;
+    pose.pose.position.y = y;
+    pose.pose.position.z = pick_prepare_z_;
+    pose.pose.orientation.x = 0.0;
+    pose.pose.orientation.y = 0.707106;
+    pose.pose.orientation.z = 0.0;
+    pose.pose.orientation.w = 0.707106;
+    // Plan a move to the pose
+    arm_.setPoseTarget(pose);
+
+    // Execute the move
+    if (!arm_.move()) {
+      return false;
+    }
+  }
+
+  bool DoOpenGripper(control_msgs::GripperCommandGoal& goal) {
+    // Open the gripper to the configuered open width
+    goal.command.position = gripper_open_;
+    // Send the gripper command
+    gripper_.sendGoal(goal);
+    // Wait for the command to complete
+    return gripper_.waitForResult(ros::Duration(30));
+  }
+
+  bool DoApproach(geometry_msgs::PoseStamped& pose) {
+    // Move to the configured height above the surface to get the gripper
+    // around the object
+    pose.pose.position.z = pick_z_;
+    arm_.setPoseTarget(pose);
+    if (!arm_.move()) {
+      return false;
+    }
+  }
+
+  bool DoGrasp(control_msgs::GripperCommandGoal& goal) {
+    // Close the gripper to the configured closed width
+    goal.command.position = gripper_close_;
+    gripper_.sendGoal(goal);
+    if (!gripper_.waitForResult(ros::Duration(30))) {
+      return false;
+    }
+    arm_.attachObject("sponge", "", gripper_group_.getLinkNames());
+    return true;
+  }
+
   bool DoPlace() {
-    // Prepare
     ROS_INFO("Moving to prepare pose");
     geometry_msgs::PoseStamped pose;
+    if (!DoPlacePrepare(pose)) {
+      ROS_WARN("Could not move to prepare pose");
+      return false;
+    }
+
+    ROS_INFO("Executing approach");
+    if (!DoPlaceApproach(pose)) {
+      ROS_WARN("Could not move to place pose");
+      return false;
+    }
+
+    ROS_INFO("Opening gripper");
+    control_msgs::GripperCommandGoal goal;
+    if (!DoRelease(goal)) {
+      ROS_WARN("Gripper open action did not complete");
+      return false;
+    }
+
+    ROS_INFO("Retreating");
+    if (!DoRetreat(pose)) {
+      ROS_WARN("Could not move to retreat pose");
+      return false;
+    }
+
+    DoRest(goal);
+
+    ROS_INFO("Place complete");
+    return true;
+  }
+
+  bool DoPlacePrepare(geometry_msgs::PoseStamped &pose) {
     pose.header.frame_id = scene_task_frame_;
     pose.pose.position.x = place_x_;
     pose.pose.position.y = place_y_;
@@ -224,51 +271,44 @@ class PickNPlacer {
     pose.pose.orientation.w = 0.707106;
     arm_.setPoseTarget(pose);
     if (!arm_.move()) {
-      ROS_WARN("Could not move to prepare pose");
       return false;
     }
+  }
 
-    // Approach
-    ROS_INFO("Executing approach");
+  bool DoPlaceApproach(geometry_msgs::PoseStamped &pose) {
     pose.pose.position.z = place_z_;
     arm_.setPoseTarget(pose);
     if (!arm_.move()) {
-      ROS_WARN("Could not move to place pose");
       return false;
     }
+  }
 
-    // Release
-    ROS_INFO("Opening gripper");
-    control_msgs::GripperCommandGoal goal;
+  bool DoRelease(control_msgs::GripperCommandGoal& goal) {
     goal.command.position = gripper_open_;
     gripper_.sendGoal(goal);
     bool finishedBeforeTimeout = gripper_.waitForResult(ros::Duration(30));
     if (!finishedBeforeTimeout) {
-      ROS_WARN("Gripper open action did not complete");
       return false;
     }
     arm_.detachObject("sponge");
+  }
 
-    // Retreat
-    ROS_INFO("Retreating");
+  bool DoRetreat(geometry_msgs::PoseStamped& pose) {
     pose.pose.position.z = pick_prepare_z_;
     arm_.setPoseTarget(pose);
     if (!arm_.move()) {
-      ROS_WARN("Could not move to retreat pose");
       return false;
     }
+  }
 
-    // Rest
+  void DoRest(control_msgs::GripperCommandGoal &goal) {
     goal.command.position = gripper_close_;
     gripper_.sendGoal(goal);
     arm_.setNamedTarget("vertical");
     arm_.move();
-
-    ROS_INFO("Place complete");
-    return true;
   }
 
- private:
+private:
   // Planning interface for the arm
   moveit::planning_interface::MoveGroupInterface arm_;
   // Planning interface for the gripper (used for planning scene purposes here)
