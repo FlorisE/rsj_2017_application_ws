@@ -10,7 +10,7 @@ add_definitions(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   moveit_core
-  moveit_ros_planning
+#  moveit_ros_planning
   moveit_ros_planning_interface
   moveit_visual_tools
   control_msgs
