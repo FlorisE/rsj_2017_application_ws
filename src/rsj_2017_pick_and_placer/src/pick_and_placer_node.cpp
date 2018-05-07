@@ -3,6 +3,8 @@
 #include "gripper.h"
 #include "pick_and_placer.cpp"
 
+ros::Subscriber sub_;
+
 void GetROSParams(PickNPlacerParams& params) {
   // Get the value for the configurable values from the parameter server, and
   // set sensible defaults for those values not specified on the parameter
@@ -37,7 +39,11 @@ int main(int argc, char **argv) {
 
   Gripper gripper("/crane_plus_gripper/gripper_command", "true");
 
-  PickNPlacer pnp(nh, gripper, params);
+  PickNPlacer pnp(gripper, params);
+
+  // Subscribe to the "/block" topic to receive object positions; excecute
+  // DoPickAndPlace() when one is received
+  sub_ = nh.subscribe("/block", 1, &PickNPlacer::DoPickAndPlace, &pnp);
 
   // Wait until the node is shut down
   ros::waitForShutdown();
