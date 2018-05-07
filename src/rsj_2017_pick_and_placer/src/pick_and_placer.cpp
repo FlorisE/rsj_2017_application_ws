@@ -1,7 +1,6 @@
 // Copyright 2017 Geoffrey Biggs (geoffrey.biggs@aist.go.jp)
 
 #include <ros/ros.h>
-#include <moveit/move_group_interface/move_group_interface.h>
 #include <moveit/planning_scene_interface/planning_scene_interface.h>
 #include <actionlib/client/simple_action_client.h>
 #include <geometry_msgs/Pose.h>
@@ -17,25 +16,19 @@
 #include "gripper.h"
 
 
-
 // Class to provide the node's behaviour and store its state between callbacks
 class PickNPlacer {
  public:
-  explicit PickNPlacer(ros::NodeHandle& node_handle, Gripper& gripper, const PickNPlacerParams& params)
+  explicit PickNPlacer(Gripper& gripper, const PickNPlacerParams& params)
       : arm_(gripper, "arm", "gripper", params) {
-
     // Specify end-effector positions in the configured task frame
-    arm_.Initialize();
+    //arm_.Initialize();
 
     // Initialise the planning scene with known objects
-    SetupPlanningScene();
+    //SetupPlanningScene();
 
     // Start by moving to the vertical pose
-    arm_.DoMoveVertical();
-
-    // Subscribe to the "/block" topic to receive object positions; excecute
-    // DoPickAndPlace() when one is received
-    sub_ = node_handle.subscribe("/block", 1, &PickNPlacer::DoPickAndPlace, this);
+    //arm_.DoMoveVertical();
   }
 
   void DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg) {
@@ -50,7 +43,7 @@ class PickNPlacer {
   }
 
   void SetupPlanningScene() {
-    ROS_INFO("Setting up planning scene");
+    //ROS_INFO("Setting up planning scene");
     // Clear the planning scene
     std::vector<std::string> objs;
     for (auto o: scene_.getObjects()) {
@@ -90,7 +83,7 @@ class PickNPlacer {
   }
 
   void AddBoxToScene(geometry_msgs::Pose2D::ConstPtr const& msg) {
-    ROS_INFO("Adding box to planning scene at %f, %f", msg->x, msg->y);
+    //ROS_INFO("Adding box to planning scene at %f, %f", msg->x, msg->y);
     // Add a box to the scene to represent the object to be picked
     moveit_msgs::CollisionObject sponge;
     sponge.header.frame_id = "base_link";
@@ -115,7 +108,7 @@ class PickNPlacer {
   }
 
   void RemoveBoxFromScene() {
-    ROS_INFO("Removing box from planning scene");
+    //ROS_INFO("Removing box from planning scene");
     // Remove the box from the scene
     std::vector<std::string> objs;
     objs.push_back("sponge");
@@ -127,6 +120,5 @@ private:
   // Object to manage the planning scene
   moveit::planning_interface::PlanningSceneInterface scene_;
   // Topic to receive object positions
-  ros::Subscriber sub_;
   // Variables to hold configured parameters
 };
