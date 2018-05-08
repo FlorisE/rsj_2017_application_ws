@@ -7,10 +7,10 @@
 
 class Gripper {
 public:
-  Gripper(std::string name, bool spinThread);
-  bool waitForServer();
-  bool waitForResult(const ros::Duration & timeout = ros::Duration(0, 0));
-  void sendGoal(const control_msgs::GripperCommandGoal& goal);
+  Gripper(const std::string &name, bool spinThread) : gripper_(name, spinThread) {};
+  virtual bool waitForServer();
+  virtual bool waitForResult(const ros::Duration & timeout = ros::Duration(0, 0));
+  virtual void sendGoal(const control_msgs::GripperCommandGoal& goal);
 private:
   actionlib::SimpleActionClient<control_msgs::GripperCommandAction> gripper_;
 };

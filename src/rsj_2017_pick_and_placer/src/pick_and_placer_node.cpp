@@ -1,6 +1,7 @@
 #include <ros/ros.h>
 
 #include "gripper.h"
+#include "arm.h"
 #include "pick_and_placer.cpp"
 
 ros::Subscriber sub_;
@@ -38,8 +39,9 @@ int main(int argc, char **argv) {
   GetROSParams(params);
 
   Gripper gripper("/crane_plus_gripper/gripper_command", "true");
+  Arm arm(gripper, "arm", "gripper", params);
 
-  PickNPlacer pnp(gripper, params);
+  PickNPlacer pnp(arm);
 
   // Subscribe to the "/block" topic to receive object positions; excecute
   // DoPickAndPlace() when one is received

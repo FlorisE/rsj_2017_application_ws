@@ -10,6 +10,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "pick_and_placer_params.h"
 #include "arm.h"
@@ -19,10 +20,10 @@
 // Class to provide the node's behaviour and store its state between callbacks
 class PickNPlacer {
  public:
-  explicit PickNPlacer(Gripper& gripper, const PickNPlacerParams& params)
-      : arm_(gripper, "arm", "gripper", params) {
+  explicit PickNPlacer(Arm& arm)
+      : arm_(arm) {
     // Specify end-effector positions in the configured task frame
-    //arm_.Initialize();
+    arm_.Initialize();
 
     // Initialise the planning scene with known objects
     //SetupPlanningScene();
@@ -116,7 +117,7 @@ class PickNPlacer {
   }
 
 private:
-  Arm arm_;
+  Arm& arm_;
   // Object to manage the planning scene
   moveit::planning_interface::PlanningSceneInterface scene_;
   // Topic to receive object positions
