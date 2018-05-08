@@ -188,3 +188,5 @@ void Arm::DoCloseGripper(control_msgs::GripperCommandGoal &goal) {
   goal.command.position = params_.gripper_close_;
   gripper_.sendGoal(goal);
 }
+
+Arm::~Arm() {}

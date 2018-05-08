@@ -140,9 +140,11 @@ include_directories(
 )
 
 ## Declare a C++ library
+
 add_library(${PROJECT_NAME}
   src/pick_and_placer.cpp
-         src/arm.cpp src/gripper.cpp)
+  src/arm.cpp
+  src/gripper.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -208,13 +210,18 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 ## Testing ##
 #############
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread -lgmock")
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/pnptests.cpp)
+catkin_add_gtest(${PROJECT_NAME}-test test/run.cpp)
 if(TARGET ${PROJECT_NAME}-test)
+  add_library(${PROJECT_NAME}_mock
+    test/MoveItMock.cpp
+    src/gripper.cpp
+    src/arm.cpp)
   target_link_libraries(${PROJECT_NAME}-test
-          ${catkin_LIBRARIES})
+    ${PROJECT_NAME}_mock
+    ${catkin_LIBRARIES})
 endif()
 
 ## Add folders to be run by python nosetests
