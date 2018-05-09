@@ -24,5 +24,7 @@ namespace moveit {
                                           const std::vector<std::string>& touch_links) {
       return true;
     }
+    bool MoveGroupInterface::detachObject(const std::string& name) { return true; }
+    bool MoveGroupInterface::setNamedTarget(const std::string& name) { return true; }
   }
 }

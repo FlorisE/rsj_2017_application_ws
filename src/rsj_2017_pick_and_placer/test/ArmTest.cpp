@@ -14,7 +14,11 @@ public:
     double x;
     double y;
     arm_.Initialize();
-    arm_.DoPick(x, y);
+    return arm_.DoPick(x, y);
+  }
+  bool DoPlace() {
+    arm_.Initialize();
+    return arm_.DoPlace();
   }
 };
 
@@ -24,36 +28,25 @@ TEST_F(ArmTest, InitializeCallsGripperWaitForServer) {
   ASSERT_TRUE(gripper_.WaitForServerCalled);
 }
 
-TEST_F(ArmTest, DoPickCallsDoPickPrepare) {
-  DoPick();
+TEST_F(ArmTest, DoPickSucceeds) {
+  bool picked = DoPick();
 
   ASSERT_TRUE(arm_.DoPickPrepareCalled);
-}
-
-TEST_F(ArmTest, DoPickCallsDoOpenGripper) {
-  DoPick();
-
   ASSERT_TRUE(arm_.DoOpenGripperCalled);
-}
-  
-TEST_F(ArmTest, DoPickCallsDoApproach) {
-  DoPick();
-
   ASSERT_TRUE(arm_.DoApproachCalled);
-}
-
-TEST_F(ArmTest, DoPickCallsDoGrasp) {
-  DoPick();
-
   ASSERT_TRUE(arm_.DoGraspCalled);
-}
-
-TEST_F(ArmTest, DoPickCallsDoRetreat) {
-  DoPick();
-
   ASSERT_TRUE(arm_.DoRetreatCalled);
+  ASSERT_TRUE(picked);
 }
 
-TEST_F(ArmTest, DoPickSucceeds) {
-  ASSERT_TRUE(DoPick());
+TEST_F(ArmTest, DoPlaceSucceeds) {
+  bool placed = DoPlace();
+
+  ASSERT_TRUE(arm_.DoPlacePrepareCalled);
+  ASSERT_TRUE(arm_.DoPlaceApproachCalled);
+  ASSERT_TRUE(arm_.DoReleaseCalled);
+  ASSERT_TRUE(arm_.DoRetreatCalled);
+  ASSERT_TRUE(arm_.DoRestCalled);
+  ASSERT_TRUE(placed);
 }
+

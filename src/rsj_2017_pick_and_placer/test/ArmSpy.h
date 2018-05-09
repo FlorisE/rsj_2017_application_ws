@@ -43,6 +43,10 @@ public:
   bool DoApproachCalled;
   bool DoGraspCalled;
   bool DoRetreatCalled;
+  bool DoPlacePrepareCalled;
+  bool DoPlaceApproachCalled;
+  bool DoReleaseCalled;
+  bool DoRestCalled;
 protected:
   bool DoPickPrepare(geometry_msgs::PoseStamped& pose, double x, double y) {
     DoPickPrepareCalled = true;
@@ -67,6 +71,26 @@ protected:
   bool DoRetreat(geometry_msgs::PoseStamped& pose) {
     DoRetreatCalled = true;
     return Arm::DoRetreat(pose);
+  }
+
+  bool DoPlacePrepare(geometry_msgs::PoseStamped& pose) {
+    DoPlacePrepareCalled = true;
+    return Arm::DoPlacePrepare(pose);
+  }
+
+  bool DoPlaceApproach(geometry_msgs::PoseStamped& pose) {
+    DoPlaceApproachCalled = true;
+    return Arm::DoPlaceApproach(pose);
+  }
+
+  bool DoRelease(control_msgs::GripperCommandGoal& goal) {
+    DoReleaseCalled = true;
+    return Arm::DoRelease(goal);
+  }
+
+  void DoRest(control_msgs::GripperCommandGoal& goal) {
+    DoRestCalled = true;
+    return Arm::DoRest(goal);
   }
 };
 
