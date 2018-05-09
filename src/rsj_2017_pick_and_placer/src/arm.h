@@ -11,7 +11,8 @@
 
 class Arm {
 public:
-  Arm(Gripper& gripper, const std::string& group, const std::string& gripperGroup, const PickNPlacerParams& params);
+  Arm(Gripper& gripper, const std::string& group, const std::string& gripperGroup, 
+      const PickNPlacerParams& params);
   virtual void Initialize();
   virtual bool DoPick(double x, double y);
   virtual bool DoPlace();

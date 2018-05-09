@@ -1,6 +1,7 @@
 #include "arm.h"
 
-Arm::Arm(Gripper& gripper, const std::string& group, const std::string& gripperGroup, const PickNPlacerParams& params)
+Arm::Arm(Gripper& gripper, const std::string& group, const std::string& gripperGroup, 
+         const PickNPlacerParams& params)
         : arm_(group), gripper_(gripper), gripper_group_(gripperGroup), params_(params) {
   arm_.setPoseReferenceFrame(params_.scene_task_frame_);
 }
@@ -106,6 +107,7 @@ bool Arm::DoPickPrepare(geometry_msgs::PoseStamped& pose, double x, double y) {
   if (!arm_.move()) {
     return false;
   }
+  return true;
 }
 
 bool Arm::DoOpenGripper(control_msgs::GripperCommandGoal& goal) {
@@ -125,6 +127,7 @@ bool Arm::DoApproach(geometry_msgs::PoseStamped& pose) {
   if (!arm_.move()) {
     return false;
   }
+  return true;
 }
 
 bool Arm::DoGrasp(control_msgs::GripperCommandGoal& goal) {
@@ -151,6 +154,7 @@ bool Arm::DoPlacePrepare(geometry_msgs::PoseStamped &pose) {
   if (!arm_.move()) {
     return false;
   }
+  return true;
 }
 
 bool Arm::DoPlaceApproach(geometry_msgs::PoseStamped &pose) {
@@ -159,6 +163,7 @@ bool Arm::DoPlaceApproach(geometry_msgs::PoseStamped &pose) {
   if (!arm_.move()) {
     return false;
   }
+  return true;
 }
 
 bool Arm::DoRelease(control_msgs::GripperCommandGoal& goal) {
@@ -169,6 +174,7 @@ bool Arm::DoRelease(control_msgs::GripperCommandGoal& goal) {
     return false;
   }
   arm_.detachObject("sponge");
+  return true;
 }
 
 bool Arm::DoRetreat(geometry_msgs::PoseStamped& pose) {
@@ -177,6 +183,7 @@ bool Arm::DoRetreat(geometry_msgs::PoseStamped& pose) {
   if (!arm_.move()) {
     return false;
   }
+  return true;
 }
 
 void Arm::DoRest(control_msgs::GripperCommandGoal &goal) {
