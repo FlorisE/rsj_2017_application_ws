@@ -10,7 +10,7 @@ add_definitions(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   moveit_core
-#  moveit_ros_planning
+  moveit_ros_planning
   moveit_ros_planning_interface
   moveit_visual_tools
   control_msgs
@@ -216,10 +216,13 @@ SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 ## Add gtest based cpp test target and link libraries
 catkin_add_gtest(${PROJECT_NAME}-test test/run.cpp)
 if(TARGET ${PROJECT_NAME}-test)
+  set(CMAKE_BUILD_TYPE Debug)
   add_library(${PROJECT_NAME}_mock
-    test/MoveItMock.cpp
+    src/pick_and_placer.cpp
     src/gripper.cpp
-    src/arm.cpp test/LoggerDouble.cpp)
+    src/arm.cpp
+    test/MoveItMock.cpp
+    test/LoggerDouble.cpp)
   target_link_libraries(${PROJECT_NAME}-test
     ${PROJECT_NAME}_mock
     ${catkin_LIBRARIES})

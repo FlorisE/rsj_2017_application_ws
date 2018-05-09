@@ -1,6 +1,11 @@
 #ifndef ARM_MOCK_H
 #define ARM_MOCK_H
 
+#include "../src/arm.h"
+#include "../src/gripper.h"
+#include "../src/logger.h"
+#include "../src/pick_and_placer_params.h"
+
 class ArmMock : public Arm {
 public:
   ArmMock(Gripper& gripper, Logger& logger, const std::string& group,

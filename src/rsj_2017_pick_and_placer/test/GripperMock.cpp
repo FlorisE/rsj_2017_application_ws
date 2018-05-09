@@ -2,7 +2,7 @@
 
 class GripperMock : public Gripper {
 public:
-  GripperMock(const std::string &name, bool spinThread) : Gripper(name, spinThread) {}
+  GripperMock() : Gripper("arm", true) {}
   bool waitForServer() { 
     WaitForServerCalled = true;
     return true; 
