@@ -19,14 +19,13 @@
 
 #include "../src/pick_and_placer.cpp"
 
-#include "SimpleActionClientMock.h"
 #include "ArmMock.h"
 
 class PickAndPlacer : public ::testing::Test {
 public:
   PickAndPlacer() 
     : params_(PickNPlacerParams()), gripper_(GripperMock("arm", true)), 
-      arm_(gripper_, "arm", "gripper", params_), pnp_(PickNPlacer(arm_)) {}
+      arm_(gripper_, logger_, "arm", "gripper", params_), pnp_(PickNPlacer(arm_, logger_)) {}
 
   virtual void SetUp() {
   }
@@ -34,6 +33,7 @@ public:
   PickNPlacerParams params_;
   PickNPlacer pnp_;
   ArmMock arm_;
+  Logger logger_;
   GripperMock gripper_;
 };
 

@@ -5,9 +5,10 @@
 
 class ArmTest : public ::testing::Test {
 public:
-  ArmTest() : arm_(gripper_, "arm", "gripper", params_) {}
+  ArmTest() : arm_(gripper_, logger_, "arm", "gripper", params_) {}
   PickNPlacerParams params_;
   GripperMock gripper_;
+  Logger logger_;
   ArmSpy arm_;
   bool DoPick() {
     double x;

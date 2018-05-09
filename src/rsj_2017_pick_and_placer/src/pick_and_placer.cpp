@@ -15,13 +15,14 @@
 #include "pick_and_placer_params.h"
 #include "arm.h"
 #include "gripper.h"
+#include "logger.h"
 
 
 // Class to provide the node's behaviour and store its state between callbacks
 class PickNPlacer {
  public:
-  explicit PickNPlacer(Arm& arm)
-      : arm_(arm) {
+  explicit PickNPlacer(Arm& arm, Logger& logger)
+      : arm_(arm), logger_(logger) {
     // Specify end-effector positions in the configured task frame
     arm_.Initialize();
 
@@ -44,7 +45,7 @@ class PickNPlacer {
   }
 
   void SetupPlanningScene() {
-    //ROS_INFO("Setting up planning scene");
+    logger_.INFO("Setting up planning scene");
     // Clear the planning scene
     std::vector<std::string> objs;
     for (auto o: scene_.getObjects()) {
@@ -84,7 +85,7 @@ class PickNPlacer {
   }
 
   void AddBoxToScene(geometry_msgs::Pose2D::ConstPtr const& msg) {
-    //ROS_INFO("Adding box to planning scene at %f, %f", msg->x, msg->y);
+    logger_.INFO("Adding box to planning scene at %f, %f", msg->x, msg->y);
     // Add a box to the scene to represent the object to be picked
     moveit_msgs::CollisionObject sponge;
     sponge.header.frame_id = "base_link";
@@ -109,7 +110,7 @@ class PickNPlacer {
   }
 
   void RemoveBoxFromScene() {
-    //ROS_INFO("Removing box from planning scene");
+    logger_.INFO("Removing box from planning scene");
     // Remove the box from the scene
     std::vector<std::string> objs;
     objs.push_back("sponge");
@@ -118,6 +119,7 @@ class PickNPlacer {
 
 private:
   Arm& arm_;
+  Logger& logger_;
   // Object to manage the planning scene
   moveit::planning_interface::PlanningSceneInterface scene_;
   // Topic to receive object positions

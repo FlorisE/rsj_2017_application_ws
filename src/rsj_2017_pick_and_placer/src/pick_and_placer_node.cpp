@@ -39,9 +39,10 @@ int main(int argc, char **argv) {
   GetROSParams(params);
 
   Gripper gripper("/crane_plus_gripper/gripper_command", "true");
-  Arm arm(gripper, "arm", "gripper", params);
+  Logger logger;
+  Arm arm(gripper, logger, "arm", "gripper", params);
 
-  PickNPlacer pnp(arm);
+  PickNPlacer pnp(arm, logger);
 
   // Subscribe to the "/block" topic to receive object positions; excecute
   // DoPickAndPlace() when one is received
