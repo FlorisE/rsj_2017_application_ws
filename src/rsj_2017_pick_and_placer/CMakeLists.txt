@@ -144,7 +144,8 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/pick_and_placer.cpp
   src/arm.cpp
-  src/gripper.cpp)
+  src/gripper.cpp
+  src/ros_logger.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -218,7 +219,7 @@ if(TARGET ${PROJECT_NAME}-test)
   add_library(${PROJECT_NAME}_mock
     test/MoveItMock.cpp
     src/gripper.cpp
-    src/arm.cpp)
+    src/arm.cpp test/LoggerDouble.cpp)
   target_link_libraries(${PROJECT_NAME}-test
     ${PROJECT_NAME}_mock
     ${catkin_LIBRARIES})

@@ -1,8 +1,8 @@
 #include "arm.h"
 
-Arm::Arm(Gripper& gripper, const std::string& group, const std::string& gripperGroup, 
+Arm::Arm(Gripper& gripper, Logger& logger, const std::string& group, const std::string& gripperGroup,
          const PickNPlacerParams& params)
-        : arm_(group), gripper_(gripper), gripper_group_(gripperGroup), params_(params) {
+        : arm_(group), logger_(logger), gripper_(gripper), gripper_group_(gripperGroup), params_(params) {
   arm_.setPoseReferenceFrame(params_.scene_task_frame_);
 }
 
@@ -12,73 +12,73 @@ void Arm::Initialize() {
 
 bool Arm::DoPick(double x, double y) {
   // Prepare
-  //ROS_INFO("Moving to prepare pose");
+  logger_.INFO("Moving to prepare pose");
   geometry_msgs::PoseStamped pose;
   if (!DoPickPrepare(pose, x, y)) {
-    //ROS_WARN("Could not move to prepare pose");
+    logger_.WARN("Could not move to prepare pose");
     return false;
   }
 
-  //ROS_INFO("Opening gripper");
+  logger_.INFO("Opening gripper");
   control_msgs::GripperCommandGoal goal;
 
   if (!DoOpenGripper(goal)) {
-    //ROS_WARN("Gripper open action did not complete");
+    logger_.WARN("Gripper open action did not complete");
     return false;
   }
 
-  //ROS_INFO("Executing approach");
+  logger_.INFO("Executing approach");
   if (!DoApproach(pose)) {
-    //ROS_WARN("Could not move to grasp pose");
+    logger_.WARN("Could not move to grasp pose");
     return false;
   }
 
-  //ROS_INFO("Grasping object");
+  logger_.INFO("Grasping object");
   if (!DoGrasp(goal)) {
-    //ROS_WARN("Gripper close action did not complete");
+    logger_.WARN("Gripper close action did not complete");
     return false;
   }
 
-  //ROS_INFO("Retreating");
+  logger_.INFO("Retreating");
   if (!DoRetreat(pose)) {
-    //ROS_WARN("Could not move to retreat pose");
+    logger_.WARN("Could not move to retreat pose");
     return false;
   }
 
-  //ROS_INFO("Pick complete");
+  logger_.INFO("Pick complete");
   return true;
 }
 
 bool Arm::DoPlace() {
-  //ROS_INFO("Moving to prepare pose");
+  logger_.INFO("Moving to prepare pose");
   geometry_msgs::PoseStamped pose;
   if (!DoPlacePrepare(pose)) {
-    //ROS_WARN("Could not move to prepare pose");
+    logger_.WARN("Could not move to prepare pose");
     return false;
   }
 
-  //ROS_INFO("Executing approach");
+  logger_.INFO("Executing approach");
   if (!DoPlaceApproach(pose)) {
-    //ROS_WARN("Could not move to place pose");
+    logger_.WARN("Could not move to place pose");
     return false;
   }
 
-  //ROS_INFO("Opening gripper");
+  logger_.INFO("Opening gripper");
   control_msgs::GripperCommandGoal goal;
   if (!DoRelease(goal)) {
-    //ROS_WARN("Gripper open action did not complete");
+    logger_.WARN("Gripper open action did not complete");
     return false;
   }
 
-  //ROS_INFO("Retreating");
+  logger_.INFO("Retreating");
   if (!DoRetreat(pose)) {
-    //ROS_WARN("Could not move to retreat pose");
+    logger_.WARN("Could not move to retreat pose");
     return false;
   }
 
   DoRest(goal);
 
-  //ROS_INFO("Place complete");
+  logger_.INFO("Place complete");
   return true;
 }
 

@@ -3,10 +3,10 @@
 
 class ArmMock : public Arm {
 public:
-  ArmMock(Gripper& gripper, const std::string& group, 
+  ArmMock(Gripper& gripper, Logger& logger, const std::string& group,
           const std::string& gripperGroup, const PickNPlacerParams& params)
-    : arm_(group), gripper_(gripper), gripper_group_(gripperGroup), 
-      params_(params), Arm(gripper, group, gripperGroup, params) {}
+    : arm_(group), gripper_(gripper), gripper_group_(gripperGroup), logger_(logger),
+      params_(params), Arm(gripper, logger, group, gripperGroup, params) {}
   void Initialize() {InitializeCalled = true;}
   bool DoPick(double x, double y) {}
   bool DoPlace() {}
@@ -17,6 +17,7 @@ private:
   moveit::planning_interface::MoveGroupInterface arm_;
   moveit::planning_interface::MoveGroupInterface gripper_group_;
   Gripper& gripper_;
+  Logger& logger_;
   const PickNPlacerParams& params_;
 };
 

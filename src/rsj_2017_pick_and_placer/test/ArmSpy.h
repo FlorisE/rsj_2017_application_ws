@@ -5,8 +5,8 @@
 
 class ArmSpy : public Arm {
 public:
-  ArmSpy(Gripper& gripper, const std::string& group, const std::string& gripperGroup,
-         const PickNPlacerParams& params) : Arm(gripper, group, gripperGroup, params) {}
+  ArmSpy(Gripper& gripper, Logger& logger, const std::string& group, const std::string& gripperGroup,
+         const PickNPlacerParams& params) : Arm(gripper, logger, group, gripperGroup, params) {}
 
   void Initialize() {
     InitializeCalled = true;
