@@ -19,5 +19,6 @@ public:
 
 TEST_F(PickAndPlacer, InitializesArm) {
   ASSERT_TRUE(arm_.InitializeCalled);
+  ASSERT_TRUE(scene_.InitializeCalled);
   ASSERT_TRUE(arm_.DoMoveVerticalCalled);
 }

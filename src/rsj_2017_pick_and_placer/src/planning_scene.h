@@ -10,12 +10,12 @@
 class PlanningScene {
 public:
   PlanningScene(Arm& arm, Logger& logger);
-  void Initialize();
-  void AddBox(geometry_msgs::Pose2D::ConstPtr const& msg);
-  void RemoveBox();
+  virtual void Initialize();
+  virtual void AddBox(geometry_msgs::Pose2D::ConstPtr const& msg);
+  virtual void RemoveBox();
 
 protected:
-  void AddTable();
+  virtual void AddTable();
   moveit::planning_interface::PlanningSceneInterface scene_;
   Arm& arm_;
   Logger& logger_;
