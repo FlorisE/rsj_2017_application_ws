@@ -221,6 +221,7 @@ if(TARGET ${PROJECT_NAME}-test)
     src/pick_and_placer.cpp
     src/gripper.cpp
     src/arm.cpp
+    src/planning_scene.cpp
     test/MoveItMock.cpp
     test/LoggerDouble.cpp)
   target_link_libraries(${PROJECT_NAME}-test

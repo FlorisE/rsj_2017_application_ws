@@ -7,10 +7,11 @@
 #include "arm.h"
 #include "gripper.h"
 #include "logger.h"
+#include "planning_scene.h"
 
 class PickNPlacer {
  public:
-  PickNPlacer(Arm& arm, Logger& logger);
+  PickNPlacer(Arm& arm, Logger& logger, PlanningScene& scene);
   void DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg);
   void SetupPlanningScene();
   void AddBoxToScene(geometry_msgs::Pose2D::ConstPtr const& msg);
@@ -18,7 +19,7 @@ class PickNPlacer {
  private:
   Arm& arm_;
   Logger& logger_;
-  moveit::planning_interface::PlanningSceneInterface scene_;
+  PlanningScene& scene_;
 };
 
 #endif

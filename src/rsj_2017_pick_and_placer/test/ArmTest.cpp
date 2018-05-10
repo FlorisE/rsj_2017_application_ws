@@ -1,15 +1,15 @@
 #include "../src/pick_and_placer_params.h"
 #include "GripperMock.h"
 #include "MoveItMock.cpp"
-#include "ArmSpy.h"
+#include "ArmMock.h"
 
-class ArmTest : public ::testing::Test {
+class ArmTest: public ::testing::Test {
 public:
   ArmTest() : arm_(gripper_, logger_, "arm", "gripper", params_) {}
   PickNPlacerParams params_;
   GripperMock gripper_;
   Logger logger_;
-  ArmSpy arm_;
+  ArmMock arm_;
   bool DoPick() {
     double x;
     double y;
