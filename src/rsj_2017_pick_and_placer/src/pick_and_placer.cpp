@@ -1,5 +1,6 @@
 // Copyright 2017 Geoffrey Biggs (geoffrey.biggs@aist.go.jp)
 
+#include <ros/ros.h>
 #include <string>
 #include <vector>
 
@@ -17,11 +18,14 @@ PickNPlacer::PickNPlacer(Arm& arm, Logger& logger, PlanningScene& scene)
   arm_.DoMoveVertical();
 }
 
-void PickNPlacer::DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg) {
+void PickNPlacer::DoPickAndPlace(double x, double y) {
   // Add the newly-detected object
-  scene_.AddBox(msg);
+  scene_.AddBox(x, y);
+  // Sleep a little to let the messages flow and be processed
+  ros::Duration(1).sleep();
+
   // Do the pick-and-place
-  if (arm_.DoPick(msg->x, msg->y)) {
+  if (arm_.DoPick(x, y)) {
     arm_.DoPlace();
   }
   // Remove the object now that we don't care about it any more

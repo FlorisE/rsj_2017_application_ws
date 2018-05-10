@@ -1,16 +1,19 @@
 #include "../src/planning_scene.h"
 
-class PlanningSceneMock: public PlanningScene {
+#ifndef PLANNING_SCENE_SPY_H
+#define PLANNING_SCENE_SPY_H
+
+class PlanningSceneSpy: public PlanningScene {
 public:
-  PlanningSceneMock(Arm& arm, Logger& logger): PlanningScene(arm, logger) {}
+  PlanningSceneSpy(Arm& arm, Logger& logger): PlanningScene(arm, logger) {}
   void Initialize() {
     InitializeCalled = true;
     PlanningScene::Initialize();
   }
 
-  void AddBox(geometry_msgs::Pose2D::ConstPtr const& msg) {
+  void AddBox(double x, double y) {
     AddBoxCalled = true;
-    PlanningScene::AddBox(msg);
+    PlanningScene::AddBox(x, y);
   }
 
   void RemoveBox() {
@@ -28,3 +31,5 @@ private:
     PlanningScene::AddTable();
   }
 };
+
+#endif // PLANNING_SCENE_SPY_H

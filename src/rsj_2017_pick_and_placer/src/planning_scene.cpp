@@ -1,4 +1,3 @@
-#include <ros/ros.h>
 #include <moveit_msgs/CollisionObject.h>
 #include <shape_msgs/SolidPrimitive.h>
 #include <std_msgs/ColorRGBA.h>
@@ -52,8 +51,8 @@ void PlanningScene::AddTable() {
     scene_.applyCollisionObject(table, colour);
 }
 
-void PlanningScene::AddBox(geometry_msgs::Pose2D::ConstPtr const& msg) {
-    logger_.INFO("Adding box to planning scene at %f, %f", msg->x, msg->y);
+void PlanningScene::AddBox(double x, double y) {
+    logger_.INFO("Adding box to planning scene at %f, %f", x, y);
     // Add a box to the scene to represent the object to be picked
     moveit_msgs::CollisionObject sponge;
     sponge.header.frame_id = "base_link";
@@ -65,16 +64,14 @@ void PlanningScene::AddBox(geometry_msgs::Pose2D::ConstPtr const& msg) {
     primitive.dimensions[1] = 0.04;
     primitive.dimensions[2] = 0.031;
     geometry_msgs::Pose pose;
-    pose.position.x = msg->x;
-    pose.position.y = msg->y;
+    pose.position.x = x;
+    pose.position.y = y;
     pose.position.z = 0.016;
     pose.orientation.w = 1;
     sponge.primitives.push_back(primitive);
     sponge.primitive_poses.push_back(pose);
     sponge.operation = sponge.ADD;
     scene_.applyCollisionObject(sponge);
-    // Sleep a little to let the messages flow and be processed
-    ros::Duration(1).sleep();
 }
 
 void PlanningScene::RemoveBox() {

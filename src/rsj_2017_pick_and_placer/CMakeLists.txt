@@ -145,6 +145,7 @@ add_library(${PROJECT_NAME}
   src/pick_and_placer.cpp
   src/arm.cpp
   src/gripper.cpp
+  src/planning_scene.cpp
   src/ros_logger.cpp)
 
 ## Add cmake target dependencies of the library
@@ -214,7 +215,7 @@ target_link_libraries(${PROJECT_NAME}_node
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test test/run.cpp)
+catkin_add_gtest(${PROJECT_NAME}-test test/RunTests.cpp)
 if(TARGET ${PROJECT_NAME}-test)
   set(CMAKE_BUILD_TYPE Debug)
   add_library(${PROJECT_NAME}_mock

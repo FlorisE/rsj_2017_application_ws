@@ -6,6 +6,19 @@
 
 ros::Subscriber sub_;
 
+class PickAndPlacerNode {
+public:
+  PickAndPlacerNode(PickNPlacer& pnp) : pnp_(pnp) {
+  }
+
+  void DoPickAndPlace(const geometry_msgs::Pose2D::ConstPtr &msg) {
+    pnp_.DoPickAndPlace(msg->x, msg->y);
+  }
+
+private:
+  PickNPlacer& pnp_;
+};
+
 void GetROSParams(PickNPlacerParams& params) {
   // Get the value for the configurable values from the parameter server, and
   // set sensible defaults for those values not specified on the parameter
@@ -41,12 +54,14 @@ int main(int argc, char **argv) {
   Gripper gripper("/crane_plus_gripper/gripper_command", "true");
   Logger logger;
   Arm arm(gripper, logger, "arm", "gripper", params);
+  PlanningScene scene(arm, logger);
 
-  PickNPlacer pnp(arm, logger);
+  PickNPlacer pnp(arm, logger, scene);
+  auto node = PickAndPlacerNode(pnp);
 
   // Subscribe to the "/block" topic to receive object positions; excecute
   // DoPickAndPlace() when one is received
-  sub_ = nh.subscribe("/block", 1, &PickNPlacer::DoPickAndPlace, &pnp);
+  sub_ = nh.subscribe("/block", 1, &PickAndPlacerNode::DoPickAndPlace, &node);
 
   // Wait until the node is shut down
   ros::waitForShutdown();

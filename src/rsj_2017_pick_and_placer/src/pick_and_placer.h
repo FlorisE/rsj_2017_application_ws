@@ -12,10 +12,8 @@
 class PickNPlacer {
  public:
   PickNPlacer(Arm& arm, Logger& logger, PlanningScene& scene);
-  void DoPickAndPlace(geometry_msgs::Pose2D::ConstPtr const& msg);
+  void DoPickAndPlace(double x, double y);
   void SetupPlanningScene();
-  void AddBoxToScene(geometry_msgs::Pose2D::ConstPtr const& msg);
-  void RemoveBoxFromScene();
  private:
   Arm& arm_;
   Logger& logger_;

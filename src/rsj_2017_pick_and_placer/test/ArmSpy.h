@@ -3,9 +3,9 @@
 
 #include "../src/arm.h"
 
-class ArmMock: public Arm {
+class ArmSpy: public Arm {
 public:
-  ArmMock(Gripper& gripper, Logger& logger, const std::string& group, const std::string& gripperGroup,
+  ArmSpy(Gripper& gripper, Logger& logger, const std::string& group, const std::string& gripperGroup,
          const PickNPlacerParams& params) : Arm(gripper, logger, group, gripperGroup, params) {}
 
   void Initialize() {

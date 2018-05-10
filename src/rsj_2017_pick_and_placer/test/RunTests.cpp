@@ -1,6 +1,6 @@
 #include <gmock/gmock.h>
 
-#include "pnptests.cpp"
+#include "PickNPlacerTest.cpp"
 #include "GripperTest.cpp"
 #include "ArmTest.cpp"
 

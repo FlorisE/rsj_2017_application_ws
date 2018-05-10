@@ -1,8 +1,13 @@
+#ifndef GRIPPER_SPY_H
+#define GRIPPER_SPY_H
+
+#include "SimpleActionClientMock.h"
 #include "../src/gripper.h"
 
-class GripperMock : public Gripper {
+class GripperSpy: public Gripper {
 public:
-  GripperMock() : Gripper("arm", true) {}
+  GripperSpy(): Gripper("arm", true) {}
+  GripperSpy(const std::string &name, bool spinThread): Gripper(name, spinThread) {}
   bool waitForServer() { 
     WaitForServerCalled = true;
     return true; 
@@ -17,4 +22,6 @@ public:
   bool WaitForServerCalled;
   bool WaitForResultCalled;
   bool SendGoalCalled;
-}
+};
+
+#endif // GRIPPER_SPY_H
