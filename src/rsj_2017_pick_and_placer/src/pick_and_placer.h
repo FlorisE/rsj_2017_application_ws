@@ -10,11 +10,12 @@
 #include "planning_scene.h"
 
 class PickNPlacer {
- public:
+public:
   PickNPlacer(Arm& arm, Logger& logger, PlanningScene& scene);
   void DoPickAndPlace(double x, double y);
   void SetupPlanningScene();
- private:
+  int sleepTime = 1; // public so that for example tests can skip sleeping
+private:
   Arm& arm_;
   Logger& logger_;
   PlanningScene& scene_;

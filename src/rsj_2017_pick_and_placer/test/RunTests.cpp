@@ -3,6 +3,7 @@
 #include "PickNPlacerTest.cpp"
 #include "GripperTest.cpp"
 #include "ArmTest.cpp"
+#include "PlanningSceneTest.cpp"
 
 int main(int argc, char **argv) {
   testing::InitGoogleTest(&argc, argv);

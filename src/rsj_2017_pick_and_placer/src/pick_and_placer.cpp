@@ -22,7 +22,7 @@ void PickNPlacer::DoPickAndPlace(double x, double y) {
   // Add the newly-detected object
   scene_.AddBox(x, y);
   // Sleep a little to let the messages flow and be processed
-  ros::Duration(1).sleep();
+  ros::Duration(sleepTime).sleep();
 
   // Do the pick-and-place
   if (arm_.DoPick(x, y)) {

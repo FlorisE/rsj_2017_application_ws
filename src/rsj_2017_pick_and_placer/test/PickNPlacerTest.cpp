@@ -8,7 +8,9 @@ class PickAndPlacer : public ::testing::Test {
 public:
   PickAndPlacer() 
     : arm_(gripper_, logger_, "arm", "gripper", params_), scene_(arm_, logger_),
-      pnp_(arm_, logger_, scene_) {}
+      pnp_(arm_, logger_, scene_) {
+    pnp_.sleepTime = 0;
+  }
 
   GripperSpy gripper_;
   Logger logger_;
