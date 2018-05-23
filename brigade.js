@@ -1,6 +1,11 @@
-const { events } = require("brigadier");
+const { events } = require("brigadier")
 
 events.on("push", function(e, project) {
-  console.log("received push for commit " + e.commit);
-});
+  var job = new Job("echo-in-container", "kinetic-ros-base")
+  job.tasks = [
+    "echo Test"
+  ]
+
+  job.run()
+})
 
