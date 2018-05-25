@@ -1,7 +1,6 @@
 const { events, Job, Group } = require("brigadier")
 
 const image = "rtmaist.azurecr.io/ros-robot-xenial-moveit:latest"
-console.log("running brigade")
 
 events.on("push", function(e, project) {
   var getImage = new Job("get-image", image)
