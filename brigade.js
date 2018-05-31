@@ -4,10 +4,11 @@ const image = "ros:kinetic-robot-xenial"
 
 function getTasks(arguments) {
   let tasksHead = [
+    "apt-get update",
     ". /opt/ros/kinetic/setup.sh",
     "cd /src",
-    "rosdep install --from-paths src --ignore-src -r -y",
-    "wstool up"
+    "wstool up",
+    "rosdep install --from-paths src --ignore-src -r -y"
   ]
   return tasksHead.concat(arguments)
 }
