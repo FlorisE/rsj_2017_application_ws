@@ -1,0 +1,4 @@
+- git: {'local-name': 'src/crane_plus_arm', 'uri': 'https://github.com/FlorisE/crane_plus_arm'}
+- git: {'local-name': 'src/rsj_2017_block_finder', 'uri': 'https://github.com/FlorisE/rsj_2017_block_finder'}
+- git: {'local-name': 'src/rsj_2017_application', 'uri': 'https://github.com/FlorisE/rsj_2017_application'}
+- git: {'local-name': 'src/rsj_2017_pick_and_placer', 'uri': 'https://github.com/FlorisE/rsj_2017_pick_and_placer'}

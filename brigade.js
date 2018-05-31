@@ -1,24 +1,27 @@
 const { events, Job, Group } = require("brigadier")
 
-const image = "rtmaist.azurecr.io/ros-robot-xenial-moveit:latest"
+const image = "ros:kinetic-robot-xenial"
+
+function getTasks(arguments) {
+  let tasksHead = [
+    ". /opt/ros/kinetic/setup.sh",
+    "cd /src",
+    "rosdep install --from-paths src --ignore-src -r -y",
+    "wstool up"
+  ]
+  return tasksHead.concat(arguments)
+}
 
 events.on("push", function(e, project) {
   var getImage = new Job("get-image", image)
   getImage.imageForcePull = true
+  getImage.imagePullSecrets = ["regcred"]
 
   var build = new Job("build", image)
-  build.tasks = [
-    ". /opt/ros/kinetic/setup.sh",
-    "cd /src",
-    "catkin_make"
-  ]
+  build.tasks = getTasks("catkin_make")
 
   var test = new Job("test", image)
-  test.tasks = [
-    ". /opt/ros/kinetic/setup.sh",
-    "cd /src",
-    "catkin_make run_tests"
-  ]
+  test.tasks = getTasks("catkin_make run_tests")
 
   Group.runEach([getImage, build, test])
 })
